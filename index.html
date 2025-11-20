@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperative Property Management System</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+}
+
+/* Login Screen Styles */
+.login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+}
+
+.login-container {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 420px;
+    width: 90%;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-header .logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: transparent;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.login-header h1 {
+    font-size: 1.5em;
+    color: #1e3a5f;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.login-header p {
+    color: #6c757d;
+    font-size: 0.95em;
+}
+
+.login-error {
+    display: none;
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9em;
+    border: 1px solid #f5c6cb;
+}
+
+.firebase-setup-notice {
+    background: #fff3cd;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.85em;
+    border: 1px solid #ffeaa7;
+}
+
+/* Top Bar Styles */
+.top-bar {
+    background: #1e3a5f;
+    color: white;
+    padding: 0.8rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.top-bar-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    background: transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: -5px;
+}
+
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.top-bar h1 {
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.date-time {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85em;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+}
+
+.sync-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #28a745;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.btn-admin {
+    background: #ffc107;
+    color: #1e3a5f;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-admin:hover {
+    background: #ffca28;
+}
+
+.btn-logout {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-logout:hover {
+    background: #c82333;
+}
+
+/* Main Container */
+.main-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.page-header {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.8em;
+    color: #1e3a5f;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.page-subtitle {
+    color: #6c757d;
+    font-size: 1em;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+/* Form Panel */
+.form-panel {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+
+.username-section {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #1e3a5f;
+}
+
+.username-label {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.username-display {
+    font-size: 1.1em;
+    color: #1e3a5f;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-title {
+    font-size: 1.3em;
+    color: #1e3a5f;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.95em;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #1e3a5f;
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+textarea.form-input {
+    min-height: 120px;
+    resize: vertical;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Buttons */
+.btn-primary {
+    width: 100%;
+    background: #1e3a5f;
+    color: white;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #152d47;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-save {
+    background: #28a745;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-save:hover {
+    background: #218838;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+.btn-export {
+    background: #007bff;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-export:hover {
+    background: #0056b3;
+}
+
+/* Inventory Panel */
+.inventory-panel {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stats-bar {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.stat-card {
+    flex: 1;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #1e3a5f;
+}
+
+.stat-label {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-bottom: 0.3rem;
+}
+
+.stat-value {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #1e3a5f;
+}
+
+.inventory-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.inventory-item {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.inventory-item:hover {
+    border-color: #1e3a5f;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+}
+
+.item-title {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.3rem;
+}
+
+.item-owner {
+    font-size: 0.9em;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.item-details {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #495057;
+    white-space: pre-wrap;
+    margin-top: 0.75rem;
+}
+
+.item-details.empty {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #adb5bd;
+}
+
+.empty-state-icon {
+    font-size: 3em;
+    margin-bottom: 1rem;
+}
+
+/* Activity Logs */
+.logs-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+}
+
+.logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.logs-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.log-entry {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.log-entry:hover {
+    background: #f8f9fa;
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.5rem;
+}
+
+.log-user {
+    font-weight: 600;
+    color: #1e3a5f;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.log-timestamp {
+    font-size: 0.85em;
+    color: #6c757d;
+}
+
+.log-action {
+    color: #495057;
+    font-size: 0.95em;
+    margin-top: 0.25rem;
+}
+
+.log-action-type {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.action-add {
+    background: #d4edda;
+    color: #155724;
+}
+
+.action-edit {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.action-delete {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.logs-empty {
+    text-align: center;
+    padding: 3rem;
+    color: #adb5bd;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 0;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    background: #1e3a5f;
+    color: white;
+    padding: 1.5rem 2rem;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: calc(90vh - 180px);
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1rem 2rem;
+    background: #f8f9fa;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+/* Batch Dropdown */
+.batch-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ced4da;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.batch-dropdown.active {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-batch {
+    font-weight: 600;
+    color: #1e3a5f;
+    font-size: 1em;
+    margin-bottom: 0.25rem;
+}
+
+.dropdown-details {
+    font-size: 0.85em;
+    color: #6c757d;
+}
+
+.dropdown-empty {
+    padding: 1rem;
+    text-align: center;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* User Card Styles */
+.user-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: all 0.2s;
+}
+
+.user-card:hover {
+    border-color: #1e3a5f;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.user-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-full-name {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.3rem;
+}
+
+.user-username {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-role {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.role-admin {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.role-user {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.btn-delete-user {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-delete-user:hover:not(:disabled) {
+    background: #c82333;
+}
+
+.btn-delete-user:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.user-meta {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .grid-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-bar-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .user-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: 0 1rem;
+    }
+    
+    .stats-bar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .login-container {
+        padding: 2rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <img src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t39.30808-6/387795515_122095330550076608_3983997016644155736_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Re_fInyH-fgQ7kNvwGZop6m&_nc_oc=AdmWKidNYCHozBDMFtOJ1GsbdMz31tFtS_goZ9QUnP68C_o3GG-Yj_sOZC7ciotKjfQ&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=HQvUbmELW2dkpx-Yqre7KQ&oh=00_Afigz7LYiCujYB7TieDhUd6rRXtpv-8PnEJmse488dWhAw&oe=6921C924" alt="Logo" class="logo-img">
+                </div>
+                <h1>Property Management System</h1>
+                <p>Please login to continue</p>
+            </div>
+            
+            <div class="firebase-setup-notice">
+                ⚠️ <strong>Firebase Setup Required:</strong> Replace the firebaseConfig in the script with your own Firebase project credentials to enable cloud sync.
+            </div>
+            
+            <form id="loginForm" onsubmit="attemptLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="loginUsername" class="form-input" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter password" required>
+                </div>
+                <div id="loginError" class="login-error">Invalid username or password</div>
+                <button type="submit" class="btn-primary">🔐 Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" style="display: none;">
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t39.30808-6/387795515_122095330550076608_3983997016644155736_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Re_fInyH-fgQ7kNvwGZop6m&_nc_oc=AdmWKidNYCHozBDMFtOJ1GsbdMz31tFtS_goZ9QUnP68C_o3GG-Yj_sOZC7ciotKjfQ&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=HQvUbmELW2dkpx-Yqre7KQ&oh=00_Afigz7LYiCujYB7TieDhUd6rRXtpv-8PnEJmse488dWhAw&oe=6921C924" alt="Logo" class="logo-img">
+                    </div>
+                    <div>
+                        <h1>Admin Panel - User Management</h1>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <div class="sync-status">
+                        <div class="sync-indicator"></div>
+                        <span>Cloud Synced</span>
+                    </div>
+                    <button class="btn-secondary" onclick="closeAdminPanel()">← Back to System</button>
+                    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="page-header">
+                <div class="page-title">👥 User Management</div>
+                <div class="page-subtitle">Create and manage user accounts for system access</div>
+            </div>
+
+            <div class="grid-layout">
+                <div class="form-panel">
+                    <div class="panel-title">
+                        <span>➕</span> Add New User
+                    </div>
+                    <form onsubmit="addNewUser(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" id="newUserFullName" class="form-input" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Username *</label>
+                            <input type="text" id="newUserUsername" class="form-input" placeholder="johndoe" required>
+                            <small style="color: #6c757d; font-size: 0.85em;">Username must be unique</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <input type="password" id="newUserPassword" class="form-input" placeholder="Enter password" required>
+                            <small style="color: #6c757d; font-size: 0.85em;">Minimum 6 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="newUserIsAdmin" style="margin-right: 8px;">
+                                Grant Admin Privileges
+                            </label>
+                            <small style="color: #856404; font-size: 0.85em; display: block; margin-top: 0.5rem;">
+                                ⚠️ Admins can manage users and have full system access
+                            </small>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Create User Account</button>
+                    </form>
+                </div>
+
+                <div class="inventory-panel">
+                    <div class="panel-title">
+                        <span>👥</span> Registered Users
+                    </div>
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Admin Users</div>
+                            <div class="stat-value" id="adminUsers">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Regular Users</div>
+                            <div class="stat-value" id="regularUsers">0</div>
+                        </div>
+                    </div>
+                    <div class="inventory-grid" id="usersList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main System -->
+    <div id="mainSystem" style="display: none;">
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t39.30808-6/387795515_122095330550076608_3983997016644155736_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Re_fInyH-fgQ7kNvwGZop6m&_nc_oc=AdmWKidNYCHozBDMFtOJ1GsbdMz31tFtS_goZ9QUnP68C_o3GG-Yj_sOZC7ciotKjfQ&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=HQvUbmELW2dkpx-Yqre7KQ&oh=00_Afigz7LYiCujYB7TieDhUd6rRXtpv-8PnEJmse488dWhAw&oe=6921C924" alt="Logo" class="logo-img">
+                    </div>
+                    <div>
+                        <h1>Cooperative Property Management System</h1>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <div class="sync-status">
+                        <div class="sync-indicator"></div>
+                        <span>Cloud Synced</span>
+                    </div>
+                    <div class="date-time" id="datetime"></div>
+                    <button id="adminPanelBtn" class="btn-admin" style="display: none;" onclick="openAdminPanel()">⚙️ Admin Panel</button>
+                    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="page-header">
+                <div class="page-title">Asset & Equipment Inventory</div>
+                <div class="page-subtitle">Manage and track all cooperative property and equipment</div>
+            </div>
+
+            <div class="grid-layout">
+                <div class="form-panel">
+                    <div class="username-section">
+                        <div class="username-label">Current User</div>
+                        <div class="username-display">
+                            <span>👤</span>
+                            <span id="currentUsername">User</span>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-title">
+                        <span>📝</span> Add New Asset
+                    </div>
+                    <form onsubmit="addItem(event)">
+                        <div class="form-group">
+                            <label class="form-label">Asset Name *</label>
+                            <input type="text" id="itemName" class="form-input" placeholder="Furniture" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assigned To *</label>
+                            <input type="text" id="ownerName" class="form-input" placeholder="Name" required>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Add Asset</button>
+                    </form>
+
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e9ecef;">
+                        <div class="panel-title">
+                            <span>🔍</span> BATCH NUMBER
+                        </div>
+                        <div class="form-group" style="position: relative;">
+                            <label class="form-label">Enter Batch Number</label>
+                            <input type="text" id="searchBatch" class="form-input" placeholder="e.g., 251118-001" autocomplete="off" oninput="showBatchDropdown()">
+                            <div id="batchDropdown" class="batch-dropdown"></div>
+                        </div>
+                        <button type="button" class="btn-primary" style="background: #28a745;" onclick="printBatchLabel()">🖨️ Print Batch Label</button>
+                        <button type="button" class="btn-primary" style="margin-top: 0.75rem; background: #007bff;" onclick="saveBatchToFile()">💾 Save to File</button>
+                    </div>
+                </div>
+
+                <div class="inventory-panel">
+                    <div class="panel-title">
+                        <span>📦</span> Current Inventory
+                    </div>
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Assets</div>
+                            <div class="stat-value" id="itemCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Last Updated</div>
+                            <div class="stat-value" style="font-size: 1em;" id="lastUpdate">N/A</div>
+                        </div>
+                    </div>
+                    <div class="inventory-grid" id="itemsList"></div>
+                </div>
+            </div>
+
+            <!-- Activity Logs Section -->
+            <div id="logsSection" class="logs-section" style="display: none;">
+                <div class="logs-header">
+                    <div class="panel-title" style="margin: 0;">
+                        <span>📋</span> Activity Logs
+                    </div>
+                    <button class="btn-export" onclick="exportLogs()">💾 Export Logs</button>
+                </div>
+                <div class="logs-container" id="logsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Asset Details</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Asset Name *</label>
+                    <input type="text" id="editItemName" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assigned To *</label>
+                    <input type="text" id="editOwnerName" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Brand</label>
+                    <input type="text" id="editBrand" class="form-input" placeholder="e.g., Dell, HP, Lenovo">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product S/n</label>
+                    <input type="text" id="editProductSN" class="form-input" placeholder="e.g., Latitude 5520">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CPU</label>
+                    <input type="text" id="editCPU" class="form-input" placeholder="e.g., Intel Core i7-11800H">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RAM</label>
+                    <input type="text" id="editRAM" class="form-input" placeholder="e.g., 16GB DDR4">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Storage</label>
+                    <input type="text" id="editStorage" class="form-input" placeholder="e.g., 512GB NVMe SSD">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Display</label>
+                    <input type="text" id="editDisplay" class="form-input" placeholder="e.g., 15.6 inch FHD">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Keyboard</label>
+                    <input type="text" id="editKeyboard" class="form-input" placeholder="e.g., Backlit RGB">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Batch Number</label>
+                    <input type="text" id="editBatch" class="form-input" placeholder="e.g., XYZ123456">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Purchase Date</label>
+                    <input type="date" id="editPurchaseDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea id="editNotes" class="form-input" style="min-height: 80px;" placeholder="Any other specifications or notes"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-save" onclick="saveEdit()">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Confirmation Modal -->
+    <div id="deleteUserModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">Confirm User Deletion</div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem;">Are you sure you want to delete this user account?</p>
+                <div style="background: #f8d7da; padding: 1rem; border-radius: 6px; border-left: 4px solid #dc3545;">
+                    <strong id="deleteUserName" style="color: #721c24;"></strong>
+                </div>
+                <p style="margin-top: 1rem; color: #856404; font-size: 0.9em;">⚠️ This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDeleteUserModal()">Cancel</button>
+                <button class="btn-delete" onclick="confirmDeleteUser()">Delete User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+// Firebase Configuration - REPLACE WITH YOUR OWN CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyCBjd4GJlTRDYimi39IxmZrGf-HGeqnicY",
+  authDomain: "assets-c1ba7.firebaseapp.com",
+  databaseURL: "https://assets-c1ba7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "assets-c1ba7",
+  storageBucket: "assets-c1ba7.firebasestorage.app",
+  messagingSenderId: "571575464782",
+  appId: "1:571575464782:web:621edf5a7732607b4e641f"
+};
+// Initialize Firebase
+let db = null;
+let firebaseInitialized = false;
+
+try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    firebaseInitialized = true;
+    console.log('Firebase initialized successfully');
+} catch (error) {
+    console.warn('Firebase not configured:', error.message);
+    firebaseInitialized = false;
+}
+
+// Global Variables
+let items = [];
+let editingItemId = null;
+let activityLogs = [];
+let currentUser = '';
+let isAdmin = false;
+let systemUsers = [];
+let deletingUserId = null;
+
+// Initialize System on Load
+window.addEventListener('DOMContentLoaded', function() {
+    initializeSystem();
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+});
+
+// System Initialization
+async function initializeSystem() {
+    await loadSystemUsers();
+    
+    const loggedInUser = sessionStorage.getItem('pmesLoggedInUser');
+    const userIsAdmin = sessionStorage.getItem('pmesIsAdmin') === 'true';
+    
+    if (loggedInUser) {
+        currentUser = loggedInUser;
+        isAdmin = userIsAdmin;
+        document.getElementById('currentUsername').textContent = currentUser;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('mainSystem').style.display = 'block';
+        
+        if (isAdmin) {
+            document.getElementById('adminPanelBtn').style.display = 'inline-block';
+            document.getElementById('logsSection').style.display = 'block';
+        }
+        
+        await loadItems();
+        await loadLogs();
+        updateLastUpdate();
+    } else {
+        showLoginScreen();
+    }
+}
+
+// Firebase Data Management
+async function loadSystemUsers() {
+    if (firebaseInitialized) {
+        try {
+            const snapshot = await db.ref('systemUsers').once('value');
+            const data = snapshot.val();
+            if (data) {
+                systemUsers = Object.values(data);
+            } else {
+                systemUsers = [{
+                    id: Date.now(),
+                    username: 'admin',
+                    password: 'admin123',
+                    fullName: 'System Administrator',
+                    isAdmin: true,
+                    createdAt: new Date().toISOString()
+                }];
+                await saveSystemUsers();
+            }
+        } catch (error) {
+            console.error('Error loading users from Firebase:', error);
+            loadSystemUsersLocal();
+        }
+    } else {
+        loadSystemUsersLocal();
+    }
+}
+
+function loadSystemUsersLocal() {
+    const stored = localStorage.getItem('pmesSystemUsers');
+    if (stored) {
+        systemUsers = JSON.parse(stored);
+    } else {
+        systemUsers = [{
+            id: Date.now(),
+            username: 'admin',
+            password: 'admin123',
+            fullName: 'System Administrator',
+            isAdmin: true,
+            createdAt: new Date().toISOString()
+        }];
+        localStorage.setItem('pmesSystemUsers', JSON.stringify(systemUsers));
+    }
+}
+
+async function saveSystemUsers() {
+    localStorage.setItem('pmesSystemUsers', JSON.stringify(systemUsers));
+    
+    if (firebaseInitialized) {
+        try {
+            const usersObj = {};
+            systemUsers.forEach(user => {
+                usersObj[user.id] = user;
+            });
+            await db.ref('systemUsers').set(usersObj);
+        } catch (error) {
+            console.error('Error saving users to Firebase:', error);
+        }
+    }
+}
+
+async function loadItems() {
+    if (firebaseInitialized) {
+        try {
+            const snapshot = await db.ref('items').once('value');
+            const data = snapshot.val();
+            if (data) {
+                items = Object.values(data);
+            }
+        } catch (error) {
+            console.error('Error loading items from Firebase:', error);
+            const stored = localStorage.getItem('pmesItems');
+            if (stored) items = JSON.parse(stored);
+        }
+    } else {
+        const stored = localStorage.getItem('pmesItems');
+        if (stored) items = JSON.parse(stored);
+    }
+    displayItems();
+}
+
+async function saveItems() {
+    localStorage.setItem('pmesItems', JSON.stringify(items));
+    updateLastUpdate();
+    
+    if (firebaseInitialized) {
+        try {
+            const itemsObj = {};
+            items.forEach(item => {
+                itemsObj[item.id] = item;
+            });
+            await db.ref('items').set(itemsObj);
+        } catch (error) {
+            console.error('Error saving items to Firebase:', error);
+        }
+    }
+}
+
+async function loadLogs() {
+    if (firebaseInitialized) {
+        try {
+            const snapshot = await db.ref('activityLogs').once('value');
+            const data = snapshot.val();
+            if (data) {
+                activityLogs = Object.values(data);
+            }
+        } catch (error) {
+            console.error('Error loading logs from Firebase:', error);
+            const stored = localStorage.getItem('pmesActivityLogs');
+            if (stored) activityLogs = JSON.parse(stored);
+        }
+    } else {
+        const stored = localStorage.getItem('pmesActivityLogs');
+        if (stored) activityLogs = JSON.parse(stored);
+    }
+    
+    if (isAdmin) {
+        displayLogs();
+    }
+}
+
+async function saveLogs() {
+    localStorage.setItem('pmesActivityLogs', JSON.stringify(activityLogs));
+    
+    if (firebaseInitialized) {
+        try {
+            const logsObj = {};
+            activityLogs.forEach(log => {
+                logsObj[log.id] = log;
+            });
+            await db.ref('activityLogs').set(logsObj);
+        } catch (error) {
+            console.error('Error saving logs to Firebase:', error);
+        }
+    }
+}
+
+// User Management
+function showLoginScreen() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainSystem').style.display = 'none';
+}
+
+async function attemptLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    const user = systemUsers.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        currentUser = user.fullName;
+        isAdmin = user.isAdmin;
+        sessionStorage.setItem('pmesLoggedInUser', currentUser);
+        sessionStorage.setItem('pmesIsAdmin', isAdmin);
+        
+        document.getElementById('currentUsername').textContent = currentUser;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('mainSystem').style.display = 'block';
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginError').style.display = 'none';
+        
+        if (isAdmin) {
+            document.getElementById('adminPanelBtn').style.display = 'inline-block';
+            document.getElementById('logsSection').style.display = 'block';
+        }
+        
+        await loadItems();
+        await loadLogs();
+        addLog('login', `${currentUser} logged in to the system`);
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        addLog('logout', `${currentUser} logged out of the system`);
+        sessionStorage.removeItem('pmesLoggedInUser');
+        sessionStorage.removeItem('pmesIsAdmin');
+        currentUser = '';
+        isAdmin = false;
+        showLoginScreen();
+    }
+}
+
+// Activity Logging
+function addLog(action, details, itemName = '') {
+    const log = {
+        id: Date.now(),
+        username: currentUser,
+        action: action,
+        details: details,
+        itemName: itemName,
+        timestamp: new Date().toISOString()
+    };
+    activityLogs.unshift(log);
+    saveLogs();
+    
+    if (isAdmin) {
+        displayLogs();
+    }
+}
+
+function displayLogs() {
+    if (!isAdmin) return;
+    
+    const logsContainer = document.getElementById('logsContainer');
+    
+    if (activityLogs.length === 0) {
+        logsContainer.innerHTML = `
+            <div class="logs-empty">
+                <div style="font-size: 2em; margin-bottom: 0.5rem;">📋</div>
+                <div>No activity logs yet</div>
+            </div>
+        `;
+        return;
+    }
+
+    logsContainer.innerHTML = activityLogs.map(log => {
+        const date = new Date(log.timestamp);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+        });
+        const formattedTime = date.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        let actionClass = 'action-add';
+        let actionLabel = 'ADD';
+        if (log.action === 'edit') {
+            actionClass = 'action-edit';
+            actionLabel = 'EDIT';
+        } else if (log.action === 'delete') {
+            actionClass = 'action-delete';
+            actionLabel = 'DELETE';
+        } else if (log.action === 'system' || log.action === 'login' || log.action === 'logout') {
+            actionClass = 'action-edit';
+            actionLabel = 'SYSTEM';
+        }
+
+        return `
+            <div class="log-entry">
+                <div class="log-header">
+                    <div class="log-user">
+                        <span>👤</span> ${log.username}
+                    </div>
+                    <div class="log-timestamp">${formattedDate} at ${formattedTime}</div>
+                </div>
+                <div class="log-action">
+                    <span class="log-action-type ${actionClass}">${actionLabel}</span>
+                    ${log.details}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function exportLogs() {
+    if (!isAdmin) {
+        alert('Access denied. Only administrators can export logs.');
+        return;
+    }
+    
+    if (activityLogs.length === 0) {
+        alert('No logs to export!');
+        return;
+    }
+
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+
+    let htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Activity Logs - Property Management System</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; background: #f8f9fa; }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: #1e3a5f; color: white; border-radius: 8px; }
+        .header h1 { margin: 0 0 10px 0; }
+        .header p { margin: 0; opacity: 0.9; }
+        .log-container { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .log-entry { padding: 15px; border-bottom: 1px solid #e9ecef; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .log-user { font-weight: bold; color: #1e3a5f; }
+        .log-timestamp { color: #6c757d; font-size: 0.9em; }
+        .log-action { color: #495057; }
+        .action-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; margin-right: 8px; }
+        .badge-add { background: #d4edda; color: #155724; }
+        .badge-edit { background: #fff3cd; color: #856404; }
+        .badge-delete { background: #f8d7da; color: #721c24; }
+        .badge-system { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Activity Logs Report</h1>
+        <p>Cooperative Property Management System</p>
+        <p>Generated on: ${currentDate}</p>
+    </div>
+    <div class="log-container">`;
+
+    activityLogs.forEach(log => {
+        const date = new Date(log.timestamp);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+        });
+        const formattedTime = date.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        let badgeClass = 'badge-add';
+        let badgeLabel = 'ADD';
+        if (log.action === 'edit') {
+            badgeClass = 'badge-edit';
+            badgeLabel = 'EDIT';
+        } else if (log.action === 'delete') {
+            badgeClass = 'badge-delete';
+            badgeLabel = 'DELETE';
+        } else if (log.action === 'system' || log.action === 'login' || log.action === 'logout') {
+            badgeClass = 'badge-system';
+            badgeLabel = 'SYSTEM';
+        }
+
+        htmlContent += `
+        <div class="log-entry">
+            <div class="log-header">
+                <div class="log-user">👤 ${log.username}</div>
+                <div class="log-timestamp">${formattedDate} at ${formattedTime}</div>
+            </div>
+            <div class="log-action">
+                <span class="action-badge ${badgeClass}">${badgeLabel}</span>
+                ${log.details}
+            </div>
+        </div>`;
+    });
+
+    htmlContent += `
+    </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Activity_Logs_${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('Activity logs exported successfully!');
+}
+
+// Date and Time Functions
+function updateDateTime() {
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    document.getElementById('datetime').textContent = now.toLocaleDateString('en-US', options);
+}
+
+function updateLastUpdate() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('lastUpdate').textContent = timeString;
+}
+
+// Batch Number Functions
+function generateBatchNumber() {
+    const today = new Date();
+    const year = today.getFullYear().toString().slice(-2);
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    const datePrefix = `${year}${month}${day}`;
+    
+    const todayItems = items.filter(item => 
+        item.batch && item.batch.startsWith(datePrefix)
+    );
+    
+    let maxNumber = 0;
+    todayItems.forEach(item => {
+        const parts = item.batch.split('-');
+        if (parts.length === 2) {
+            const num = parseInt(parts[1]);
+            if (!isNaN(num) && num > maxNumber) {
+                maxNumber = num;
+            }
+        }
+    });
+    
+    const nextNumber = (maxNumber + 1).toString().padStart(3, '0');
+    return `${datePrefix}-${nextNumber}`;
+}
+
+function showBatchDropdown() {
+    const searchValue = document.getElementById('searchBatch').value.trim().toLowerCase();
+    const dropdown = document.getElementById('batchDropdown');
+    
+    if (searchValue === '') {
+        dropdown.classList.remove('active');
+        return;
+    }
+
+    const matchingItems = items.filter(item => 
+        item.batch && item.batch.toLowerCase().includes(searchValue)
+    );
+
+    if (matchingItems.length === 0) {
+        dropdown.innerHTML = '<div class="dropdown-empty">No matching batch numbers found</div>';
+        dropdown.classList.add('active');
+        return;
+    }
+
+    dropdown.innerHTML = matchingItems.map(item => `
+        <div class="dropdown-item" onclick="selectBatch('${item.batch}')">
+            <div class="dropdown-batch">${item.batch}</div>
+            <div class="dropdown-details">${item.name} - ${item.owner}</div>
+        </div>
+    `).join('');
+    
+    dropdown.classList.add('active');
+}
+
+function selectBatch(batch) {
+    document.getElementById('searchBatch').value = batch;
+    document.getElementById('batchDropdown').classList.remove('active');
+}
+
+function printBatchLabel() {
+    const batchNumber = document.getElementById('searchBatch').value.trim();
+    
+    if (!batchNumber) {
+        alert('Please enter a batch number to print!');
+        return;
+    }
+
+    const item = items.find(i => i.batch && i.batch.toLowerCase() === batchNumber.toLowerCase());
+    
+    if (!item) {
+        alert('No asset found with batch number: ' + batchNumber);
+        return;
+    }
+
+    const printWindow = window.open('', '', 'width=800,height=600');
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Batch Number Label - ${item.batch}</title>
+            <style>
+                @media print { body { margin: 0; } .no-print { display: none; } }
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .label-container { border: 3px solid #1e3a5f; padding: 30px; max-width: 600px; margin: 0 auto; border-radius: 10px; }
+                .asset-info { margin: 20px 0; }
+                .info-row { display: flex; padding: 12px; border-bottom: 1px solid #ddd; }
+                .info-label { font-weight: bold; width: 150px; color: #1e3a5f; }
+                .info-value { flex: 1; }
+                .batch-highlight { background: #f8f9fa; padding: 20px; text-align: center; border: 2px dashed #1e3a5f; margin: 20px 0; border-radius: 5px; }
+                .batch-number { font-size: 32px; font-weight: bold; color: #1e3a5f; letter-spacing: 2px; }
+                .date-info { text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+                .print-button { display: block; margin: 20px auto; padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+                .print-button:hover { background: #218838; }
+            </style>
+        </head>
+        <body>
+            <div class="label-container">
+                <div class="asset-info">
+                    <div class="info-row">
+                        <div class="info-label">Asset Name:</div>
+                        <div class="info-value">${item.name}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Assigned To:</div>
+                        <div class="info-value">${item.owner}</div>
+                    </div>
+                    ${item.brand ? `<div class="info-row"><div class="info-label">Brand:</div><div class="info-value">${item.brand}</div></div>` : ''}
+                    ${item.productSN ? `<div class="info-row"><div class="info-label">Product S/n:</div><div class="info-value">${item.productSN}</div></div>` : ''}
+                </div>
+                <div class="batch-highlight">
+                    <div class="batch-number">B/N: ${item.batch}</div>
+                </div>
+                <div class="date-info">
+                    ${item.purchaseDate ? `<strong>Purchase Date:</strong> ${item.purchaseDate}` : ''}
+                </div>
+            </div>
+            <button class="print-button no-print" onclick="window.print()">🖨️ Print Label</button>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+}
+
+function saveBatchToFile() {
+    const batchNumber = document.getElementById('searchBatch').value.trim();
+    
+    if (!batchNumber) {
+        alert('Please enter a batch number to save!');
+        return;
+    }
+
+    const item = items.find(i => i.batch && i.batch.toLowerCase() === batchNumber.toLowerCase());
+    
+    if (!item) {
+        alert('No asset found with batch number: ' + batchNumber);
+        return;
+    }
+
+    const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <title>PMS - ${item.batch}</title>
+    <style>
+        @media print { body { margin: 0; } .no-print { display: none; } }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .label-container { border: 3px solid #1e3a5f; padding: 30px; max-width: 600px; margin: 0 auto; border-radius: 10px; }
+        .asset-info { margin: 20px 0; }
+        .info-row { display: flex; padding: 12px; border-bottom: 1px solid #ddd; }
+        .info-label { font-weight: bold; width: 150px; color: #1e3a5f; }
+        .info-value { flex: 1; }
+        .batch-highlight { background: #f8f9fa; padding: 20px; text-align: center; border: 2px dashed #1e3a5f; margin: 20px 0; border-radius: 5px; }
+        .batch-number { font-size: 18px; font-weight: bold; color: #1e3a5f; letter-spacing: 1px; }
+        .date-info { text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+        .print-button { display: block; margin: 20px auto; padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        .print-button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <div class="label-container">
+        <div class="asset-info">
+            <div class="info-row">
+                <div class="info-label">Asset Name:</div>
+                <div class="info-value">${item.name}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Assigned To:</div>
+                <div class="info-value">${item.owner}</div>
+            </div>
+            ${item.brand ? `<div class="info-row"><div class="info-label">Brand:</div><div class="info-value">${item.brand}</div></div>` : ''}
+            ${item.productSN ? `<div class="info-row"><div class="info-label">Product S/n:</div><div class="info-value">${item.productSN}</div></div>` : ''}
+        </div>
+        <div class="batch-highlight">
+            <div class="batch-number">B/N: ${item.batch}</div>
+        </div>
+        <div class="date-info">
+            ${item.purchaseDate ? `<strong>Purchase Date:</strong> ${item.purchaseDate}` : ''}
+        </div>
+    </div>
+    <button class="print-button no-print" onclick="window.print()">🖨️ Print Label</button>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Batch_Label_${item.batch}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('Batch label file saved successfully!');
+    document.getElementById('searchBatch').value = '';
+}
+
+// Item Management
+async function addItem(e) {
+    e.preventDefault();
+    const itemName = document.getElementById('itemName').value.trim();
+    const ownerName = document.getElementById('ownerName').value.trim();
+
+    if (!itemName || !ownerName) {
+        alert('Please fill in all required fields!');
+        return;
+    }
+
+    const newItem = {
+        id: Date.now(),
+        name: itemName,
+        owner: ownerName,
+        brand: '',
+        productSN: '',
+        cpu: '',
+        ram: '',
+        storage: '',
+        display: '',
+        keyboard: '',
+        batch: '',
+        purchaseDate: '',
+        notes: '',
+        dateAdded: new Date().toISOString()
+    };
+
+    items.push(newItem);
+    await saveItems();
+    displayItems();
+
+    addLog('add', `Added new asset: ${itemName} assigned to ${ownerName}`, itemName);
+
+    document.getElementById('itemName').value = '';
+    document.getElementById('ownerName').value = '';
+}
+
+async function deleteItem(id) {
+    if (confirm('Are you sure you want to delete this asset from inventory?')) {
+        const item = items.find(i => i.id === id);
+        const itemName = item ? item.name : 'Unknown';
+        
+        items = items.filter(item => item.id !== id);
+        await saveItems();
+        displayItems();
+        
+        addLog('delete', `Deleted asset: ${itemName}`, itemName);
+    }
+}
+
+function displayItems() {
+    const itemsList = document.getElementById('itemsList');
+    const itemCount = document.getElementById('itemCount');
+    
+    itemCount.textContent = items.length;
+
+    if (items.length === 0) {
+        itemsList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div>No assets in inventory. Add your first asset to get started.</div>
+            </div>
+        `;
+        return;
+    }
+
+    itemsList.innerHTML = items.map(item => {
+        const specs = [];
+        if (item.brand) specs.push(`Brand: ${item.brand}`);
+        if (item.productSN) specs.push(`Product S/n: ${item.productSN}`);
+        if (item.cpu) specs.push(`CPU: ${item.cpu}`);
+        if (item.ram) specs.push(`RAM: ${item.ram}`);
+        if (item.storage) specs.push(`Storage: ${item.storage}`);
+        if (item.display) specs.push(`Display: ${item.display}`);
+        if (item.keyboard) specs.push(`Keyboard: ${item.keyboard}`);
+        if (item.batch) specs.push(`Batch Number: ${item.batch}`);
+        if (item.purchaseDate) specs.push(`Purchase Date: ${item.purchaseDate}`);
+        if (item.notes) specs.push(`Notes: ${item.notes}`);
+        
+        const detailsText = specs.length > 0 ? specs.join('\n') : '';
+        
+        return `
+            <div class="inventory-item" onclick="openEditModal(${item.id})">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-owner">
+                            <span>👤</span> ${item.owner}
+                        </div>
+                    </div>
+                    <button class="btn-delete" onclick="event.stopPropagation(); deleteItem(${item.id})">
+                        🗑️ Remove
+                    </button>
+                </div>
+                ${detailsText ? 
+                    `<div class="item-details">${detailsText}</div>` : 
+                    `<div class="item-details empty">Click to add specifications and details</div>`
+                }
+            </div>
+        `;
+    }).join('');
+}
+
+// Modal Functions
+function openEditModal(id) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+
+    editingItemId = id;
+    document.getElementById('editItemName').value = item.name;
+    document.getElementById('editOwnerName').value = item.owner;
+    document.getElementById('editBrand').value = item.brand || '';
+    document.getElementById('editProductSN').value = item.productSN || '';
+    document.getElementById('editCPU').value = item.cpu || '';
+    document.getElementById('editRAM').value = item.ram || '';
+    document.getElementById('editStorage').value = item.storage || '';
+    document.getElementById('editDisplay').value = item.display || '';
+    document.getElementById('editKeyboard').value = item.keyboard || '';
+    document.getElementById('editBatch').value = item.batch || '';
+    document.getElementById('editPurchaseDate').value = item.purchaseDate || '';
+    document.getElementById('editNotes').value = item.notes || '';
+    document.getElementById('editModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('editModal').classList.remove('active');
+    editingItemId = null;
+}
+
+async function saveEdit() {
+    const item = items.find(i => i.id === editingItemId);
+    if (!item) return;
+
+    const newName = document.getElementById('editItemName').value.trim();
+    const newOwner = document.getElementById('editOwnerName').value.trim();
+
+    if (!newName || !newOwner) {
+        alert('Asset name and assigned person are required!');
+        return;
+    }
+
+    const changes = [];
+    if (item.name !== newName) changes.push(`name from "${item.name}" to "${newName}"`);
+    if (item.owner !== newOwner) changes.push(`owner from "${item.owner}" to "${newOwner}"`);
+
+    item.name = newName;
+    item.owner = newOwner;
+    item.brand = document.getElementById('editBrand').value.trim();
+    item.productSN = document.getElementById('editProductSN').value.trim();
+    item.cpu = document.getElementById('editCPU').value.trim();
+    item.ram = document.getElementById('editRAM').value.trim();
+    item.storage = document.getElementById('editStorage').value.trim();
+    item.display = document.getElementById('editDisplay').value.trim();
+    item.keyboard = document.getElementById('editKeyboard').value.trim();
+    item.batch = document.getElementById('editBatch').value.trim();
+    item.purchaseDate = document.getElementById('editPurchaseDate').value;
+    item.notes = document.getElementById('editNotes').value.trim();
+
+    await saveItems();
+    displayItems();
+    closeModal();
+
+    if (changes.length > 0) {
+        addLog('edit', `Updated asset "${newName}": ${changes.join(', ')}`, newName);
+    } else {
+        addLog('edit', `Updated specifications for asset: ${newName}`, newName);
+    }
+}
+
+// Event Listeners
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+document.getElementById('deleteUserModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteUserModal();
+    }
+});
+
+document.addEventListener('click', function(e) {
+    const searchBatch = document.getElementById('searchBatch');
+    const dropdown = document.getElementById('batchDropdown');
+    
+    if (searchBatch && dropdown && e.target !== searchBatch && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+    }
+});
+
+// Admin Panel Functions
+function openAdminPanel() {
+    if (!isAdmin) {
+        alert('Access denied. Admin privileges required.');
+        return;
+    }
+    document.getElementById('mainSystem').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    displayUsers();
+}
+
+function closeAdminPanel() {
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('mainSystem').style.display = 'block';
+    
+    if (isAdmin) {
+        displayLogs();
+    }
+}
+
+async function addNewUser(e) {
+    e.preventDefault();
+    
+    const fullName = document.getElementById('newUserFullName').value.trim();
+    const username = document.getElementById('newUserUsername').value.trim();
+    const password = document.getElementById('newUserPassword').value;
+    const isAdminUser = document.getElementById('newUserIsAdmin').checked;
+    
+    if (!fullName || !username || !password) {
+        alert('Please fill in all required fields!');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long!');
+        return;
+    }
+    
+    const existingUser = systemUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
+    if (existingUser) {
+        alert('Username already exists! Please choose a different username.');
+        return;
+    }
+    
+    const newUser = {
+        id: Date.now(),
+        username: username,
+        password: password,
+        fullName: fullName,
+        isAdmin: isAdminUser,
+        createdAt: new Date().toISOString(),
+        createdBy: currentUser
+    };
+    
+    systemUsers.push(newUser);
+    await saveSystemUsers();
+    displayUsers();
+    
+    document.getElementById('newUserFullName').value = '';
+    document.getElementById('newUserUsername').value = '';
+    document.getElementById('newUserPassword').value = '';
+    document.getElementById('newUserIsAdmin').checked = false;
+    
+    addLog('system', `Created new user account: ${username} (${fullName})${isAdminUser ? ' with admin privileges' : ''}`);
+    
+    alert(`User account created successfully!\n\nUsername: ${username}\nFull Name: ${fullName}\nRole: ${isAdminUser ? 'Administrator' : 'Regular User'}`);
+}
+
+function displayUsers() {
+    const usersList = document.getElementById('usersList');
+    const totalUsers = document.getElementById('totalUsers');
+    const adminUsers = document.getElementById('adminUsers');
+    const regularUsers = document.getElementById('regularUsers');
+    
+    totalUsers.textContent = systemUsers.length;
+    adminUsers.textContent = systemUsers.filter(u => u.isAdmin).length;
+    regularUsers.textContent = systemUsers.filter(u => !u.isAdmin).length;
+    
+    if (systemUsers.length === 0) {
+        usersList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <div>No users registered yet.</div>
+            </div>
+        `;
+        return;
+    }
+    
+    const sortedUsers = [...systemUsers].sort((a, b) => {
+        if (a.isAdmin && !b.isAdmin) return -1;
+        if (!a.isAdmin && b.isAdmin) return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    
+    usersList.innerHTML = sortedUsers.map(user => {
+        const createdDate = new Date(user.createdAt);
+        const formattedDate = createdDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        
+        const isCurrentUser = user.username === systemUsers.find(u => u.fullName === currentUser)?.username;
+        const isOnlyAdmin = user.isAdmin && systemUsers.filter(u => u.isAdmin).length === 1;
+        
+        return `
+            <div class="user-card">
+                <div class="user-card-header">
+                    <div class="user-info">
+                        <div class="user-full-name">${user.fullName}</div>
+                        <div class="user-username">
+                            <span>@${user.username}</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <span class="user-role ${user.isAdmin ? 'role-admin' : 'role-user'}">
+                            ${user.isAdmin ? '⚙️ Admin' : '👤 User'}
+                        </span>
+                        <button 
+                            class="btn-delete-user" 
+                            onclick="openDeleteUserModal(${user.id})"
+                            ${isCurrentUser || isOnlyAdmin ? 'disabled' : ''}
+                            title="${isCurrentUser ? 'Cannot delete your own account' : isOnlyAdmin ? 'Cannot delete the only admin account' : 'Delete user'}"
+                        >
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+                <div class="user-meta">
+                    Created on ${formattedDate}${user.createdBy ? ` by ${user.createdBy}` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openDeleteUserModal(userId) {
+    const user = systemUsers.find(u => u.id === userId);
+    if (!user) return;
+    
+    deletingUserId = userId;
+    document.getElementById('deleteUserName').textContent = `${user.fullName} (@${user.username})`;
+    document.getElementById('deleteUserModal').classList.add('active');
+}
+
+function closeDeleteUserModal() {
+    document.getElementById('deleteUserModal').classList.remove('active');
+    deletingUserId = null;
+}
+
+async function confirmDeleteUser() {
+    if (!deletingUserId) return;
+    
+    const user = systemUsers.find(u => u.id === deletingUserId);
+    if (!user) return;
+    
+    if (user.isAdmin && systemUsers.filter(u => u.isAdmin).length === 1) {
+        alert('Cannot delete the only admin account!');
+        closeDeleteUserModal();
+        return;
+    }
+    
+    const currentUserObj = systemUsers.find(u => u.fullName === currentUser);
+    if (currentUserObj && currentUserObj.id === deletingUserId) {
+        alert('Cannot delete your own account!');
+        closeDeleteUserModal();
+        return;
+    }
+    
+    systemUsers = systemUsers.filter(u => u.id !== deletingUserId);
+    await saveSystemUsers();
+    displayUsers();
+    
+    addLog('system', `Deleted user account: ${user.username} (${user.fullName})`);
+    
+    closeDeleteUserModal();
+    alert('User account deleted successfully!');
+}
+    </script>
+</body>
+</html>
