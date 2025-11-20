@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperative Property Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <img src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t39.30808-6/387795515_122095330550076608_3983997016644155736_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Re_fInyH-fgQ7kNvwGZop6m&_nc_oc=AdmWKidNYCHozBDMFtOJ1GsbdMz31tFtS_goZ9QUnP68C_o3GG-Yj_sOZC7ciotKjfQ&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=HQvUbmELW2dkpx-Yqre7KQ&oh=00_Afigz7LYiCujYB7TieDhUd6rRXtpv-8PnEJmse488dWhAw&oe=6921C924" alt="Logo" class="logo-img">
+                </div>
+                <h1>Property Management System</h1>
+                <p>Please login to continue</p>
+            </div>
+            <form id="loginForm" onsubmit="attemptLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="loginUsername" class="form-input" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter password" required>
+                </div>
+                <div id="loginError" class="login-error">Invalid username or password</div>
+                <button type="submit" class="btn-primary">🔐 Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" style="display: none;">
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t39.30808-6/387795515_122095330550076608_3983997016644155736_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Re_fInyH-fgQ7kNvwGZop6m&_nc_oc=AdmWKidNYCHozBDMFtOJ1GsbdMz31tFtS_goZ9QUnP68C_o3GG-Yj_sOZC7ciotKjfQ&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=HQvUbmELW2dkpx-Yqre7KQ&oh=00_Afigz7LYiCujYB7TieDhUd6rRXtpv-8PnEJmse488dWhAw&oe=6921C924" alt="Logo" class="logo-img">
+                    </div>
+                    <div>
+                        <h1>Admin Panel - User Management</h1>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <button class="btn-secondary" onclick="closeAdminPanel()">← Back to System</button>
+                    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="page-header">
+                <div class="page-title">👥 User Management</div>
+                <div class="page-subtitle">Create and manage user accounts for system access</div>
+            </div>
+
+            <div class="grid-layout">
+                <div class="form-panel">
+                    <div class="panel-title">
+                        <span>➕</span> Add New User
+                    </div>
+                    <form onsubmit="addNewUser(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" id="newUserFullName" class="form-input" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Username *</label>
+                            <input type="text" id="newUserUsername" class="form-input" placeholder="johndoe" required>
+                            <small style="color: #6c757d; font-size: 0.85em;">Username must be unique</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <input type="password" id="newUserPassword" class="form-input" placeholder="Enter password" required>
+                            <small style="color: #6c757d; font-size: 0.85em;">Minimum 6 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="newUserIsAdmin" style="margin-right: 8px;">
+                                Grant Admin Privileges
+                            </label>
+                            <small style="color: #856404; font-size: 0.85em; display: block; margin-top: 0.5rem;">
+                                ⚠️ Admins can manage users and have full system access
+                            </small>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Create User Account</button>
+                    </form>
+                </div>
+
+                <div class="inventory-panel">
+                    <div class="panel-title">
+                        <span>👥</span> Registered Users
+                    </div>
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Admin Users</div>
+                            <div class="stat-value" id="adminUsers">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Regular Users</div>
+                            <div class="stat-value" id="regularUsers">0</div>
+                        </div>
+                    </div>
+                    <div class="inventory-grid" id="usersList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main System -->
+    <div id="mainSystem" style="display: none;">
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t39.30808-6/387795515_122095330550076608_3983997016644155736_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Re_fInyH-fgQ7kNvwGZop6m&_nc_oc=AdmWKidNYCHozBDMFtOJ1GsbdMz31tFtS_goZ9QUnP68C_o3GG-Yj_sOZC7ciotKjfQ&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=HQvUbmELW2dkpx-Yqre7KQ&oh=00_Afigz7LYiCujYB7TieDhUd6rRXtpv-8PnEJmse488dWhAw&oe=6921C924" alt="Logo" class="logo-img">
+                    </div>
+                    <div>
+                        <h1>Cooperative Property Management System</h1>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <div class="date-time" id="datetime"></div>
+                    <button id="adminPanelBtn" class="btn-admin" style="display: none;" onclick="openAdminPanel()">⚙️ Admin Panel</button>
+                    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="page-header">
+                <div class="page-title">Asset & Equipment Inventory</div>
+                <div class="page-subtitle">Manage and track all cooperative property and equipment</div>
+            </div>
+
+            <div class="grid-layout">
+                <div class="form-panel">
+                    <div class="username-section">
+                        <div class="username-label">Current User</div>
+                        <div class="username-display">
+                            <span>👤</span>
+                            <span id="currentUsername">User</span>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-title">
+                        <span>📝</span> Add New Asset
+                    </div>
+                    <form onsubmit="addItem(event)">
+                        <div class="form-group">
+                            <label class="form-label">Asset Name *</label>
+                            <input type="text" id="itemName" class="form-input" placeholder="Furniture" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assigned To *</label>
+                            <input type="text" id="ownerName" class="form-input" placeholder="Name" required>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Add Asset</button>
+                    </form>
+
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e9ecef;">
+                        <div class="panel-title">
+                            <span>🔍</span> BATCH NUMBER
+                        </div>
+                        <div class="form-group" style="position: relative;">
+                            <label class="form-label">Enter Batch Number</label>
+                            <input type="text" id="searchBatch" class="form-input" placeholder="e.g., 251118-001" autocomplete="off" oninput="showBatchDropdown()">
+                            <div id="batchDropdown" class="batch-dropdown"></div>
+                        </div>
+                        <button type="button" class="btn-primary" style="background: #28a745;" onclick="printBatchLabel()">🖨️ Print Batch Label</button>
+                        <button type="button" class="btn-primary" style="margin-top: 0.75rem; background: #007bff;" onclick="saveBatchToFile()">💾 Save to File</button>
+                    </div>
+                </div>
+
+                <div class="inventory-panel">
+                    <div class="panel-title">
+                        <span>📦</span> Current Inventory
+                    </div>
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Assets</div>
+                            <div class="stat-value" id="itemCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Last Updated</div>
+                            <div class="stat-value" style="font-size: 1em;" id="lastUpdate">N/A</div>
+                        </div>
+                    </div>
+                    <div class="inventory-grid" id="itemsList"></div>
+                </div>
+            </div>
+
+            <!-- Activity Logs Section - Only visible to admins -->
+            <div id="logsSection" class="logs-section" style="display: none;">
+                <div class="logs-header">
+                    <div class="panel-title" style="margin: 0;">
+                        <span>📋</span> Activity Logs
+                    </div>
+                    <button class="btn-export" onclick="exportLogs()">💾 Export Logs</button>
+                </div>
+                <div class="logs-container" id="logsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Asset Details</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Asset Name *</label>
+                    <input type="text" id="editItemName" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assigned To *</label>
+                    <input type="text" id="editOwnerName" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Brand</label>
+                    <input type="text" id="editBrand" class="form-input" placeholder="e.g., Dell, HP, Lenovo">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product S/n</label>
+                    <input type="text" id="editProductSN" class="form-input" placeholder="e.g., Latitude 5520">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CPU</label>
+                    <input type="text" id="editCPU" class="form-input" placeholder="e.g., Intel Core i7-11800H">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RAM</label>
+                    <input type="text" id="editRAM" class="form-input" placeholder="e.g., 16GB DDR4">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Storage</label>
+                    <input type="text" id="editStorage" class="form-input" placeholder="e.g., 512GB NVMe SSD">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Display</label>
+                    <input type="text" id="editDisplay" class="form-input" placeholder="e.g., 15.6 inch FHD">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Keyboard</label>
+                    <input type="text" id="editKeyboard" class="form-input" placeholder="e.g., Backlit RGB">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Batch Number</label>
+                    <input type="text" id="editBatch" class="form-input" placeholder="e.g., XYZ123456">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Purchase Date</label>
+                    <input type="date" id="editPurchaseDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea id="editNotes" class="form-input" style="min-height: 80px;" placeholder="Any other specifications or notes"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-save" onclick="saveEdit()">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Confirmation Modal -->
+    <div id="deleteUserModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">Confirm User Deletion</div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem;">Are you sure you want to delete this user account?</p>
+                <div style="background: #f8d7da; padding: 1rem; border-radius: 6px; border-left: 4px solid #dc3545;">
+                    <strong id="deleteUserName" style="color: #721c24;"></strong>
+                </div>
+                <p style="margin-top: 1rem; color: #856404; font-size: 0.9em;">⚠️ This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDeleteUserModal()">Cancel</button>
+                <button class="btn-delete" onclick="confirmDeleteUser()">Delete User</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
